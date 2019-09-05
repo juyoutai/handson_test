@@ -1,0 +1,211 @@
+---
+title: "ggplot2"
+author: "juyoutai"
+date: "2019/9/4"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## データ可視化〜まだExcelで疲弊してるの？
+今回だけでggplot2を習得するのは難しいので本当に紹介程度です。
+コピペでも全然OKです。
+岩嵜先生のとても参考になる[資料](https://heavywatal.github.io/slides/nagoya2018/2-ggplot.html)がよくまとまっています。
+[資料1](https://researchmap.jp/index.php?action=multidatabase_action_main_filedownload&download_flag=1&upload_id=162965&metadata_id=164932)
+[資料2](https://mrunadon.github.io/%E6%A6%82%E8%A6%81%E3%82%92%E3%81%8A%E3%81%95%E3%81%88%E3%81%A6ggplot2%E3%82%92%E4%BD%BF%E3%81%84%E3%81%93%E3%81%AA%E3%81%99%E3%83%81%E3%83%A5%E3%83%BC%E3%83%88%E3%83%AA%E3%82%A2%E3%83%AB%E3%81%A8%E3%82%B3%E3%83%BC%E3%83%89%E9%9B%86/)
+
+日本語の資料はいくらでもあるし、英語も含めればなんでもある。
+
+
+データ可視化は重要。
+Rは可視化に強い。特に人気の可視化パッケージであるggplot2を中心に学ぶ。  
+これでよく論文で見かける図が作れる！matplotlib?seaborn?知らないぁ。悪いがR以外は帰ってくれないか。最近のいけてる論文のfigは結構ggplot2で作成されている
+ggplot2の説明は難しいのでとにかくコードを実行してたくさん図を作っていきましょう。  
+イメージはレイヤを重ねていく感じ
+
+基本
+ggplot() # 使うデータを指定
+aes() # x軸、y軸など指定
+geom_() # 棒グラフか、散布図かなど
+theme_() # 背景や軸の見栄え
+
+
+```{r ggplot2}
+library(ggplot2)
+head(diamonds) # ダイアモンドのデータ
+head(mpg) # 自動車の燃費のデータ
+
+ggplot(data = mpg) +
+  geom_point(mapping = aes(x = displ, y = hwy))
+ggplot(data = mpg) +
+  geom_point(mapping = aes(x = displ, y = hwy, colour = class))
+ggplot(data = mpg) +
+  geom_point(mapping = aes(x = displ, y = hwy, shape = class))
+ggplot(data = mpg) +
+  geom_point(mapping = aes(x = displ, y = hwy, colour = "red"))
+
+ggplot(data = mpg) +
+  geom_point(mapping = aes(x = displ, y = hwy)) +
+  facet_wrap(~class)
+ggplot(data = mpg) +
+  geom_point(mapping = aes(x = displ, y = hwy, colour = class)) +
+  facet_wrap(~class)
+
+
+
+
+
+
+
+
+ggplot(data = mpg) +
+  geom_point(mapping = aes(x = displ, y = hwy))
+ggplot(data = mpg) +
+  geom_smooth(mapping = aes(x = displ, y = hwy))
+ggplot(data = mpg) +
+  geom_smooth(mapping = aes(x = displ, y = hwy, colour = drv))
+
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) +
+  geom_point() +
+  geom_smooth()
+  
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) +
+  geom_point(aes(colour = class)) +
+  geom_smooth()
+
+
+##########
+ggplot(data = diamonds, mapping = aes(x = cut)) +
+  geom_bar()
+
+ggplot(data = diamonds, mapping = aes(x = cut, fill = cut)) +
+  geom_bar()
+
+ggplot(data = diamonds, mapping = aes(x = cut, y = price)) +
+  geom_boxplot()
+
+a <- ggplot(diamonds, aes(cut, price, fill = cut)) +
+  geom_violin(trim = FALSE) +
+  geom_boxplot(width = 0.08, fill = "white", outlier.size = FALSE) +
+  theme_light()
+
+a + coord_flip()
+
+
+
+
+```
+
+diamondsやmpgを使って基本的なプロット
+geom_boxなど
+
+
+画像の保存方法
+GUIでやるかggsave関数
+
+
+これ以降は発展的内容
+
+
+## viridis colour
+[参照](https://cran.r-project.org/web/packages/viridis/vignettes/intro-to-viridis.html)
+視覚多様性の時代
+```{r viridis_theme, eval=TRUE, include=TRUE, cache=TRUE}
+# viridis theme
+data <- data.frame(x = rnorm(10000), y = rnorm(10000))
+# viridis
+g1 <- ggplot(data, aes(x = x, y = y)) + geom_hex() + coord_fixed() +
+  scale_fill_viridis_c() +
+  theme_bw()
+# magma
+g2 <- ggplot(data, aes(x, y)) + geom_hex() + coord_fixed() +
+  scale_fill_viridis_c(option = "magma") +
+  theme_bw()
+# inferno
+g3 <- ggplot(data, aes(x, y)) + geom_hex() + coord_fixed() +
+  scale_fill_viridis_c(option = "inferno") +
+  theme_bw()
+# plasma
+g4 <- ggplot(data, aes(x, y)) + geom_hex() + coord_fixed() +
+  scale_fill_viridis_c(option = "plasma") +
+  theme_bw()
+# cividis
+g5 <- ggplot(data, aes(x, y)) + geom_hex() + coord_fixed() +
+  scale_fill_viridis_c(option = "cividis") +
+  theme_bw()
+# default colour of ggplot2
+g6 <- ggplot(data, aes(x, y)) + geom_hex() + coord_fixed() + theme_bw()
+gridExtra::grid.arrange(g1, g2, g3, g4, g5, g6)
+```
+
+
+
+gplotsパッケージのheatmap.2関数を使ってヒートマップ作成
+```{r heatmap}
+heatmap_2 <-  read.table("heatmap_2.txt", header = T, sep = "\t", row.names = 1)
+head(heatmap_2)
+colnames(heatmap_2) <- c("1", "2", "3", "4", "5", "6", "7", "8")
+head(heatmap_2)
+
+class(heatmap_2)
+
+
+library(gplots)
+library(viridis)
+# png("heatmap.png", width = 400, height = 800)
+heatmap.2(as.matrix(heatmap_2), col = bluered(256), trace = "none", cexCol = 0.9, cexRow = 0.5)
+heatmap.2(as.matrix(heatmap_2), col = bluered(256), trace = "none", cexCol = 0.9, cexRow = 0.5, scale = "row") # scaling
+# Seurat colour
+heatmap.2(as.matrix(heatmap_2), col = colorRampPalette(c("#FF00FF", "#000000", "#FFFF00")), trace = "none", cexCol = 0.9, cexRow = 0.5, scale = "row")
+heatmap.2(as.matrix(heatmap_2), col = viridis, trace = "none", cexCol = 0.9, cexRow = 0.5)
+heatmap.2(as.matrix(heatmap_2), col = viridis, trace = "none", cexCol = 0.9, cexRow = 0.5, scale = "row")
+heatmap.2(as.matrix(heatmap_2), col = viridis, trace = "none", cexCol = 0.9, cexRow = 0.5, scale = "col")
+
+heatmap.2(as.matrix(heatmap_2), col = magma, trace = "none", cexCol = 0.9, cexRow = 0.5)
+# scaling
+heatmap.2(as.matrix(heatmap_2), col = magma, trace = "none", cexCol = 0.9, cexRow = 0.5, scale = "row")
+heatmap.2(as.matrix(heatmap_2), col = plasma, trace = "none", cexCol = 0.9, cexRow = 0.5, scale = "row")
+heatmap.2(as.matrix(heatmap_2), col = inferno, trace = "none", cexCol = 0.9, cexRow = 0.5, scale = "row")
+heatmap.2(as.matrix(heatmap_2), col = cividis, trace = "none", cexCol = 0.9, cexRow = 0.5, scale = "row")
+heatmap.2(as.matrix(heatmap_2), col = viridis, trace = "none", cexCol = 0.9, cexRow = 0.5, scale = "row")
+
+```
+
+
+同じような作業を繰り返すなら簡単なプログラミングで効率的に
+この程度ならfor構文で構わない
+map関数でもできると思う（勉強不足）
+```{r for, eval=F}
+for (i in c(viridis, magma, plasma, inferno, cividis)) {
+  heatmap.2(as.matrix(heatmap_2), col = i, trace = "none", cexCol = 0.9, cexRow = 0.5, scale = "row")
+}
+
+```
+
+complexheatmapを用いると複雑なヒートマップ描画できるが今回は割愛
+
+
+発展
+論文でよく見る図を再現してみる
+MA plot
+Scatter plot
+Volcano plot
+
+
+
+散布図に遺伝子名を追加ggrepel
+
+
+seqlogoとか
+genome browserもいける
+
+地図かける geom_sf()
+
+動画も作れる gganimate
+
+
+
+
+

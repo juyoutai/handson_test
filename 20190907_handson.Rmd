@@ -1,0 +1,231 @@
+---
+title: "20190907_handson"
+author: "juyoutai"
+date: "2019/8/26"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# 本講習会の趣旨
+〜令和元年、時は空前のAIブーム〜  
+???「これからの時代はAIっしょ！放射線診断なんてAIに取って代わられるんやで」  
+???「これからの医学はAIだ！データサイエンスだ！機械学習！ディープラーニング！」  
+???「R言語って聞いたことあるけどお高いんでしょう？」  
+???「Rはオワコン、これからはPythonの時代ってはっきりワカンダネ」  
+???「バイオインフォでなんとかしてくれ！」  
+とはいえ昨今、基本的なデータ解析のスキルは医師や研究者には必須になってきている。そこで今回は今までExcelしか触れてこなかった学生&wet研究者にR言語を紹介します。
+
+## 対象者
+初心者を想定してます。経験ある人は退屈な内容かと思います。
+
+## 目標
+R言語の基本を学んで動かせる（最初はコピペでもOK）  
+RStudioを使える
+パッケージ追加ができる
+データ読込〜可視化までできる  
+CUIに慣れる  
+
+Rといえば統計というイメージが強いかと思いますが、今回は数学使いません（やったね）。
+
+## 流れ
+以下予定（理想）  
+最初の1時間で講習会の概要&Rの導入  
+後半1時間でggplot2やりたい  
+時間あれば最後に課題できれば  
+
+分からない点などあれば橘か阿部まで。  
+
+## ???「Rなんていいから〜-seqの解析がしたい！」 
+いきなりバイオインフォの難しい解析に挑戦するのはあまり得策ではない。まずは基礎的なことを身につけてからの方が最終的には効率的で解析の幅も広がるかと思う。
+
+## ???「RじゃなくてPythonを使いたい」 
+Rも捨てたもんじゃありません。宗教上の理由がなければ今回はRを使ってください。  
+
+## 演習1
+今回は学内PCを使用するので既にRとRStudioはインストールされてます。  
+RStudioを起動しましょう。RStudioはRStudio社が開発しているR言語の統合開発環境（IDE）です。
+
+# RStudioの基本的な使い方
+一緒に操作していきましょう。
+projects作成  
+各pane  
+この辺りは使っていくうちに覚える  
+補完機能とっても便利、tabキーでいける  
+RStudioを自分好みにカスタマイズ（色とか）
+
+# 各種リポジトリ上のpackageインストール方法
+Rは様々なパッケージをインストールすることで機能が拡張できる。
+リポジトリとはパッケージの保管場所。以下の代表的な3つを押さえておきたい。 
+
+## [CRAN(The Comprehensive R Archive Network)](https://cran.r-project.org)
+R公式のリポジトリ
+シーラン、クラン
+install.packages関数でインストール
+```{r CRAN}
+# install.packages("tidyverse")
+# library(tidyverse)
+# 複数まとめてだったら
+# install.packages(c("", ""))
+```
+
+## [Bioconductor](https://bioconductor.org) 
+バイオンフォに特化したパッケージが多数収録されている。
+Bioconductorが使いこなせるとかなり多彩なバイオインフォの解析ができる。
+BiocManagerパッケージのinstall関数でインストール
+```{r bioc}
+# install.packages("BiocManager")
+# library(BiocManager)
+# BiocManager::install("ComplexHeatmap")
+# library(ComplexHeatmap)
+```
+
+## [GitHub](https://github.com) 
+クラウド上でプログラムを共有するサイト（ギットハブ、ギッハブ）  
+devtoolsのinstall_github関数でインストール
+日々新しいパッケージが公開されている。GitHub上のパッケージは開発版だったりする。最新のverが入手できる。
+最新のシングルセル関連パッケージとかまずはここに公開される
+```{r github, message=FALSE}
+# install.packages(c("devtools", "usethis"))
+# library(devtools)
+# devtools::install_github("SaskiaFreytag/schex")
+# library(schex)
+```
+いずれのパッケージもlibrary関数で読み込むと使えるようになる。
+
+## 演習2
+packageのインストール〜読み込みまで実際にやってみよう!  
+以下のパッケージを各リポジトリからインストールして読み込みましょう。  
+CRAN：tidyverse, gplots, viridis, BiocManager  
+Bioconductor：ComplexHeatmap
+
+
+# Rの基本
+```{r base}
+1 + 1
+2*3
+2/3
+2^3
+# 代入演算子には<-と=があるが前者がメジャー
+x <- 2
+x
+y <- "Hello, world"
+y
+print(y)
+```
+
+## データ型
+R言語ではデータにいくつかの種類がある。
+e.g. numeric, character, factor, logical, etc...
+class関数、str関数でデータ型を確認できる
+```{r class}
+# 下のコードを実行してみよう
+# 1 + "1" 
+# エラー？数値 + 文字列は無理
+1 + as.numeric("1") # 文字列を数値に変換すればいける
+
+paste0("ABCD", "1")
+paste0("ABCD", 1)
+
+# 理論値
+1 == 1 # "="は代入だが"=="はイコール
+1 == 2
+1 != 2
+
+
+class(x)
+str(x)
+class(y)
+str(y)
+```
+
+## データ構造
+今回はそこまで気にしなくてもOKです。
+取り敢えずはdata.frameを覚えておいてください。data.frameとは行と列がある構造。
+listはR上のどんな形式でも要素に持てる。
+data.frame, matrix, listなど。
+tidyverseだとtibbleというモダンなデータ構造がある。
+```{r iris}
+# head関数でデータの中身がみれる
+# irisはアヤメのデータ
+head(iris)
+class(iris)
+iris$Sepal.Length # $で各列にアクセス可能、これは便利でよく使う
+```
+
+
+## データ入出力
+関数の前にパッケージ名を指定すると分かりやすい&同名関数の競合を回避できる。  
+将来的にありがたみを実感します。  
+いわゆるbaseはRの標準関数（元から備わっている機能）  
+今の流行はtidyverseと呼ばれる別の方法
+```{r readr}
+# まずはbaseで
+# 先ほどのirisを保存してみよう
+write.table(iris, "iris.tsv", sep = "\t", row.names = FALSE) # タブ区切りファイル
+write.table(iris, "iris.csv", sep = ",", row.names = FALSE) # コンマ区切りファイル
+write.csv(iris, "iris_2.csv") # csv専用の関数、結局sep以下のオプションが違うだけ
+
+# 出力したファイルを読み込んでみよう
+iris1 <- read.table("iris.tsv", sep = "\t")
+head(iris1)
+
+# library(readr)
+# data <- read_csv("")
+# data <- readr::read_csv("")
+# data
+```
+## 演習3
+write.table(row.names = TRUE)としたら何が起こるか？  
+iris.csvをread.table関数を使って読み込んでiris2というオブジェクトを作成しよう
+
+## 演習4
+今まで使ったのはbaseの関数だが、これは大規模データを読み込もうとすると非常に時間がかかる。
+もっと良い方法はreadrパッケージのread_...関数
+readr::read_csv()でiris.csvを読み込んで新しいオブジェクトiris3を作成しよう
+iris2とiris3に違いはあるか？
+
+## パッケージや関数の詳細を調べる
+困ったらヘルプやvignetteを読もう。 
+help(関数名)、または?関数名でもいける。
+vignette(パッケージ名)
+```{r help}
+help(readr)
+?read_csv
+vignette("readr")
+```
+
+## 演習5
+これから使う予定のggplot2パッケージのヘルプを読んでみよう。ちなみに英語。
+先ほどのread.table関数のヘルプも見てみよう
+
+## 今日触れないこと
+tidyverseのtidyrやdplyrを用いるとデータ整形、前処理が楽々できる。
+今回は触れない。
+
+## 発展  %>% （パイプ演算子）について 
+出力を次の関数の引数として渡す。
+中間変数を作らなくて良い、人間の自然な思考に近いなどの利点あり。
+ただしggplot2では %>% は使えず + を使う
+```{r pipe}
+library(magrittr)
+x <- 1:10
+x
+mean(x)
+x %>% mean()
+z <- c(1, 2, NA, 8, 3, NA, 3)
+sum(is.na(z))
+z %>% is.na() %>% sum()
+```
+
+
+
+## 終わり
+正直、今までの内容を理解しなくても後半はコピペでなんとかなるので没問題。
+それでは本題のggplot2を使った可視化に取り掛かりたい。
+```{r pressure}
+sessionInfo()
+date()
+```

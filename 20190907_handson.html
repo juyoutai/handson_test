@@ -270,7 +270,6 @@ code {
 }
 img {
   max-width:100%;
-  height: auto;
 }
 .tabbed-pane {
   padding-top: 12px;
@@ -414,7 +413,8 @@ RStudioを起動しましょう。RStudioはRStudio社が開発しているR言�
 </div>
 <div id="rstudio" class="section level1">
 <h1>RStudioの基本的な使い方</h1>
-<p>一緒に操作していきましょう。 projects作成<br />
+<p>一緒に操作していきましょう。<br />
+projects作成<br />
 各pane<br />
 この辺りは使っていくうちに覚える<br />
 補完機能とっても便利、tabキーでいける<br />
@@ -422,10 +422,10 @@ RStudioを自分好みにカスタマイズ（色とか）</p>
 </div>
 <div id="package" class="section level1">
 <h1>各種リポジトリ上のpackageインストール方法</h1>
-<p>Rは様々なパッケージをインストールすることで機能が拡張できる。 リポジトリとはパッケージの保管場所。以下の代表的な3つを押さえておきたい。</p>
+<p>標準搭載された機能以外にもRは様々なパッケージをインストールすることで機能が拡張できる。 リポジトリとはパッケージの保管場所。以下の代表的な3つを押さえておきたい。</p>
 <div id="cranthe-comprehensive-r-archive-network" class="section level2">
 <h2><a href="https://cran.r-project.org">CRAN(The Comprehensive R Archive Network)</a></h2>
-<p>R公式のリポジトリ シーラン、クラン install.packages関数でインストール</p>
+<p>R公式のリポジトリ（シーラン、クラン） install.packages関数でインストール</p>
 <pre class="r"><code># install.packages(&quot;tidyverse&quot;)
 # library(tidyverse)
 # 複数まとめてだったら
@@ -433,7 +433,9 @@ RStudioを自分好みにカスタマイズ（色とか）</p>
 </div>
 <div id="bioconductor" class="section level2">
 <h2><a href="https://bioconductor.org">Bioconductor</a></h2>
-<p>バイオンフォに特化したパッケージが多数収録されている。 Bioconductorが使いこなせるとかなり多彩なバイオインフォの解析ができる。 BiocManagerパッケージのinstall関数でインストール</p>
+<p>バイオンフォに特化したパッケージが多数収録されている。しかもきちんとメンテナンスされてる。<br />
+最新版は3.9<br />
+Bioconductorが使いこなせるとかなり多彩なバイオインフォの解析ができる。 BiocManagerパッケージのinstall関数でインストール</p>
 <pre class="r"><code># install.packages(&quot;BiocManager&quot;)
 # library(BiocManager)
 # BiocManager::install(&quot;ComplexHeatmap&quot;)
@@ -454,7 +456,7 @@ devtoolsのinstall_github関数でインストール 日々新しいパッケー
 <p>packageのインストール〜読み込みまで実際にやってみよう!<br />
 以下のパッケージを各リポジトリからインストールして読み込みましょう。<br />
 CRAN：tidyverse, gplots, viridis, BiocManager<br />
-Bioconductor：ComplexHeatmap</p>
+Bioconductor：seqlogo, MotifDb</p>
 </div>
 </div>
 <div id="r" class="section level1">
@@ -626,10 +628,10 @@ sum(is.na(z))</code></pre>
 ## 
 ## loaded via a namespace (and not attached):
 ##  [1] compiler_3.6.0  tools_3.6.0     htmltools_0.3.6 yaml_2.2.0     
-##  [5] Rcpp_1.0.2      stringi_1.4.3   rmarkdown_1.14  knitr_1.24     
-##  [9] stringr_1.4.0   xfun_0.8        digest_0.6.20   evaluate_0.14</code></pre>
+##  [5] Rcpp_1.0.2      stringi_1.4.3   rmarkdown_1.15  knitr_1.24     
+##  [9] stringr_1.4.0   xfun_0.9        digest_0.6.20   evaluate_0.14</code></pre>
 <pre class="r"><code>date()</code></pre>
-<pre><code>## [1] &quot;Thu Sep  5 22:05:17 2019&quot;</code></pre>
+<pre><code>## [1] &quot;Sat Sep  7 10:32:44 2019&quot;</code></pre>
 </div>
 </div>
 

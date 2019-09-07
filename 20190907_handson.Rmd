@@ -49,7 +49,7 @@ Rも捨てたもんじゃありません。宗教上の理由がなければ今�
 RStudioを起動しましょう。RStudioはRStudio社が開発しているR言語の統合開発環境（IDE）です。
 
 # RStudioの基本的な使い方
-一緒に操作していきましょう。
+一緒に操作していきましょう。  
 projects作成  
 各pane  
 この辺りは使っていくうちに覚える  
@@ -57,12 +57,11 @@ projects作成
 RStudioを自分好みにカスタマイズ（色とか）
 
 # 各種リポジトリ上のpackageインストール方法
-Rは様々なパッケージをインストールすることで機能が拡張できる。
+標準搭載された機能以外にもRは様々なパッケージをインストールすることで機能が拡張できる。
 リポジトリとはパッケージの保管場所。以下の代表的な3つを押さえておきたい。 
 
 ## [CRAN(The Comprehensive R Archive Network)](https://cran.r-project.org)
-R公式のリポジトリ
-シーラン、クラン
+R公式のリポジトリ（シーラン、クラン）
 install.packages関数でインストール
 ```{r CRAN}
 # install.packages("tidyverse")
@@ -72,7 +71,8 @@ install.packages関数でインストール
 ```
 
 ## [Bioconductor](https://bioconductor.org) 
-バイオンフォに特化したパッケージが多数収録されている。
+バイオンフォに特化したパッケージが多数収録されている。しかもきちんとメンテナンスされてる。  
+最新版は3.9  
 Bioconductorが使いこなせるとかなり多彩なバイオインフォの解析ができる。
 BiocManagerパッケージのinstall関数でインストール
 ```{r bioc}
@@ -99,7 +99,7 @@ devtoolsのinstall_github関数でインストール
 packageのインストール〜読み込みまで実際にやってみよう!  
 以下のパッケージを各リポジトリからインストールして読み込みましょう。  
 CRAN：tidyverse, gplots, viridis, BiocManager  
-Bioconductor：ComplexHeatmap
+Bioconductor：seqlogo, MotifDb
 
 
 # Rの基本

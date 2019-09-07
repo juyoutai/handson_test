@@ -16,30 +16,30 @@ knitr::opts_chunk$set(echo = TRUE)
 [資料1](https://researchmap.jp/index.php?action=multidatabase_action_main_filedownload&download_flag=1&upload_id=162965&metadata_id=164932)
 [資料2](https://mrunadon.github.io/%E6%A6%82%E8%A6%81%E3%82%92%E3%81%8A%E3%81%95%E3%81%88%E3%81%A6ggplot2%E3%82%92%E4%BD%BF%E3%81%84%E3%81%93%E3%81%AA%E3%81%99%E3%83%81%E3%83%A5%E3%83%BC%E3%83%88%E3%83%AA%E3%82%A2%E3%83%AB%E3%81%A8%E3%82%B3%E3%83%BC%E3%83%89%E9%9B%86/)
 
-日本語の資料はいくらでもあるし、英語も含めればなんでもある。
-
+資料はネット上に日本語、英語問わずたくさんある。
 
 データ可視化は重要。
 Rは可視化に強い。特に人気の可視化パッケージであるggplot2を中心に学ぶ。  
-これでよく論文で見かける図が作れる！matplotlib?seaborn?知らないぁ。悪いがR以外は帰ってくれないか。最近のいけてる論文のfigは結構ggplot2で作成されている
+Pythonだとmatplotlibやseabornが人気のよう。最近のいけてる論文のfigは結構ggplot2で作成されている。
 ggplot2の説明は難しいのでとにかくコードを実行してたくさん図を作っていきましょう。  
 イメージはレイヤを重ねていく感じ
 
-基本
-ggplot() # 使うデータを指定
-aes() # x軸、y軸など指定
-geom_() # 棒グラフか、散布図かなど
-theme_() # 背景や軸の見栄え
+基本  
+ggplot() # 使うデータを指定  
+aes() # x軸、y軸など指定  
+geom_() # 棒グラフか、散布図かヒストグラムなのかなど  
+theme_() # 背景や軸の見栄え  
 
-
+# 練習
 ```{r ggplot2}
 library(ggplot2)
 head(diamonds) # ダイアモンドのデータ
 head(mpg) # 自動車の燃費のデータ
-
+# ?mpgでこのデータセットの詳細がわかる
+# displは排気量, hwyは燃費
 ggplot(data = mpg) +
   geom_point(mapping = aes(x = displ, y = hwy))
-ggplot(data = mpg) +
+m1 <- ggplot(data = mpg) +
   geom_point(mapping = aes(x = displ, y = hwy, colour = class))
 ggplot(data = mpg) +
   geom_point(mapping = aes(x = displ, y = hwy, shape = class))
@@ -49,12 +49,12 @@ ggplot(data = mpg) +
 ggplot(data = mpg) +
   geom_point(mapping = aes(x = displ, y = hwy)) +
   facet_wrap(~class)
-ggplot(data = mpg) +
+m2 <- ggplot(data = mpg) +
   geom_point(mapping = aes(x = displ, y = hwy, colour = class)) +
   facet_wrap(~class)
 
-
-
+m1
+m2
 
 
 
@@ -76,7 +76,6 @@ ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) +
   geom_smooth()
 
 
-##########
 ggplot(data = diamonds, mapping = aes(x = cut)) +
   geom_bar()
 
@@ -93,20 +92,99 @@ a <- ggplot(diamonds, aes(cut, price, fill = cut)) +
 
 a + coord_flip()
 
-
+ggsave(a + coord_flip(), filename = "violinplot.jpg")
 
 
 ```
-
-diamondsやmpgを使って基本的なプロット
-geom_boxなど
-
 
 画像の保存方法
 GUIでやるかggsave関数
 
 
-これ以降は発展的内容
+# 練習
+```{r rensyu}
+getwd()
+list.files()
+data <- readr::read_csv("data2_corrected.csv")
+head(data)
+class(data)
+str(data)
+
+summary(data)
+summary(data$Food_A)
+mean(data$Food_A) # 平均
+sd(data$Food_A) # 標準偏差
+var(data$Food_A) # 分散
+class(data$Gender) # Rではデータの型が重要となる. Genderはcharacterなので、これをfactorに変換する必要がある
+data$Gender <- factor(data$Gender, #factorに変更
+          levels = c("Male", "Female"))  # Maleを1, Femaleを2に指定
+class(data$Gender)
+summary(data)
+summary(subset(data, Gender == 'Female')) #女性のみを抽出
+
+p <- ggplot(data, aes(Age, Food_A)) +  # 解析対象の列を指定
+  geom_point()         # 散布図なのでpointで作図することを指定
+p
+
+p +  geom_point(aes(color = Gender)) # デフォルト
+
+p +  geom_point(aes(color = Gender)) + 
+  scale_colour_manual(values = c(Male  = "black", Female  = "red")) # 色を指定した
+
+p +  geom_point(size = 3, aes(shape = Gender)) # 丸と三角
+
+p + stat_smooth(method = "lm") # 回帰直線を追加
+summary(data)
+
+p <- ggplot(data,     # データを指定
+            aes(Height, Weight)) +  # x, y軸をそれぞれ指定
+  geom_point(aes(color = Gender)) # 性差について色分け
+p 
+
+p <- ggplot(data, aes(x = Gender, y = BMI))
+p + geom_boxplot() # 箱ひげ図
+# 身長の分布
+ggplot(data, aes(x = Height)) + geom_density()
+ggplot(data, aes(x = Height)) + geom_density(aes(colour = Gender))
+ggplot(data, aes(x = Height)) + geom_histogram(fill = "white", colour = "black") +
+  facet_grid(Gender ~ .)
+
+
+
+
+# お遊び〜Food_Aと体重の関係は？
+ggplot(data, aes(x = Weight, y = Food_A)) + geom_point()
+# 正規性が無いのでSpearmanの相関係数
+ggplot(data, aes(x = Weight)) + geom_histogram()
+ggplot(data, aes(x = Food_A)) + geom_histogram()
+
+
+cor.test(data$Food_A, #xを指定
+         data$Weight,    #yを指定
+         method="spearman") #Spearman's correlationを指定
+# p値と相関係数は？
+# ここまで
+
+ggplot(data, aes(x = Food_A)) + geom_histogram(fill = "white", colour = "black") +
+  facet_grid(Gender ~ .)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 ## viridis colour
@@ -155,22 +233,21 @@ class(heatmap_2)
 library(gplots)
 library(viridis)
 # png("heatmap.png", width = 400, height = 800)
-heatmap.2(as.matrix(heatmap_2), col = bluered(256), trace = "none", cexCol = 0.9, cexRow = 0.5)
-heatmap.2(as.matrix(heatmap_2), col = bluered(256), trace = "none", cexCol = 0.9, cexRow = 0.5, scale = "row") # scaling
+heatmap.2(as.matrix(heatmap_2), col = bluered(256), trace = "none", cexCol = 0.9, cexRow = 0.5, labRow = F)
+heatmap.2(as.matrix(heatmap_2), col = bluered(256), trace = "none", cexCol = 0.9, cexRow = 0.5, scale = "row", labRow = F) # scaling
 # Seurat colour
-heatmap.2(as.matrix(heatmap_2), col = colorRampPalette(c("#FF00FF", "#000000", "#FFFF00")), trace = "none", cexCol = 0.9, cexRow = 0.5, scale = "row")
-heatmap.2(as.matrix(heatmap_2), col = viridis, trace = "none", cexCol = 0.9, cexRow = 0.5)
-heatmap.2(as.matrix(heatmap_2), col = viridis, trace = "none", cexCol = 0.9, cexRow = 0.5, scale = "row")
-heatmap.2(as.matrix(heatmap_2), col = viridis, trace = "none", cexCol = 0.9, cexRow = 0.5, scale = "col")
+heatmap.2(as.matrix(heatmap_2), col = colorRampPalette(c("#FF00FF", "#000000", "#FFFF00")), trace = "none", cexCol = 0.9, cexRow = 0.5, scale = "row", labRow = F)
+heatmap.2(as.matrix(heatmap_2), col = viridis, trace = "none", cexCol = 0.9, cexRow = 0.5, labRow = F)
+heatmap.2(as.matrix(heatmap_2), col = viridis, trace = "none", cexCol = 0.9, cexRow = 0.5, scale = "row", labRow = F)
+heatmap.2(as.matrix(heatmap_2), col = viridis, trace = "none", cexCol = 0.9, cexRow = 0.5, scale = "col", labRow = F)
 
-heatmap.2(as.matrix(heatmap_2), col = magma, trace = "none", cexCol = 0.9, cexRow = 0.5)
+heatmap.2(as.matrix(heatmap_2), col = magma, trace = "none", cexCol = 0.9, cexRow = 0.5, labRow = F)
 # scaling
-heatmap.2(as.matrix(heatmap_2), col = magma, trace = "none", cexCol = 0.9, cexRow = 0.5, scale = "row")
-heatmap.2(as.matrix(heatmap_2), col = plasma, trace = "none", cexCol = 0.9, cexRow = 0.5, scale = "row")
-heatmap.2(as.matrix(heatmap_2), col = inferno, trace = "none", cexCol = 0.9, cexRow = 0.5, scale = "row")
-heatmap.2(as.matrix(heatmap_2), col = cividis, trace = "none", cexCol = 0.9, cexRow = 0.5, scale = "row")
-heatmap.2(as.matrix(heatmap_2), col = viridis, trace = "none", cexCol = 0.9, cexRow = 0.5, scale = "row")
-
+heatmap.2(as.matrix(heatmap_2), col = magma, trace = "none", cexCol = 0.9, cexRow = 0.5, scale = "row", labRow = F)
+heatmap.2(as.matrix(heatmap_2), col = plasma, trace = "none", cexCol = 0.9, cexRow = 0.5, scale = "row", labRow = F)
+heatmap.2(as.matrix(heatmap_2), col = inferno, trace = "none", cexCol = 0.9, cexRow = 0.5, scale = "row", labRow = F)
+heatmap.2(as.matrix(heatmap_2), col = cividis, trace = "none", cexCol = 0.9, cexRow = 0.5, scale = "row", labRow = F)
+heatmap.2(as.matrix(heatmap_2), col = viridis, trace = "none", cexCol = 0.9, cexRow = 0.5, scale = "row", labRow = F)
 ```
 
 
@@ -186,26 +263,82 @@ for (i in c(viridis, magma, plasma, inferno, cividis)) {
 
 complexheatmapを用いると複雑なヒートマップ描画できるが今回は割愛
 
-
-発展
-論文でよく見る図を再現してみる
-MA plot
-Scatter plot
-Volcano plot
-
-
-
-散布図に遺伝子名を追加ggrepel
-
-
-seqlogoとか
-genome browserもいける
-
 地図かける geom_sf()
 
-動画も作れる gganimate
+動画も作れる [gganimate](https://gganimate.com)
 
 
+# バインフォ的なプロット
+MAプロットとボルケーノプロット
+マイクロアレイやRNA-seqの発現変動遺伝子を示す際によく用いられる
+```{r repel}
+### 少しはバイオインフォマティクス的なプロットも
+# MA-plotやvolcano plotを作図してみる
+merged <- readr::read_delim("merged_annot.txt", delim = " ")
+str(merged)
+head(merged)
+DE_sig <- dplyr::filter(merged, adj.P.Val <= 0.05, SYMBOL != "NA")
+# FDRが0.05以下の遺伝子のみ抜き出す
+ma <- ggplot(data = merged, aes(x = AveExpr, y = logFC)) + 
+  geom_point(size = 0.1) +
+  geom_point(data = DE_sig, colour = "red", size = 0.3) + 
+  theme_classic()
+ma + ggtitle("MA plot")
+library(ggrepel)
+ma + geom_text_repel(data = DE_sig, aes(label = SYMBOL))
 
+vp <- ggplot(data = merged, aes(x = logFC, y = -log10(adj.P.Val))) + 
+  geom_point(size = 0.1) +
+  geom_point(data = DE_sig, colour = "red", size = 0.3) + 
+  theme_classic()
+vp
+vp + ggtitle("volcano plot of microarray")
+vp + geom_text_repel(data = DE_sig, aes(label = SYMBOL))
+
+```
+
+ggseqlogoパッケージ使うとggplot2でsequence   logoを描画できる。ggplot2の要領で図に色々と書き込める点も便利！時代はtidyverse！
+```{r ggseqlogo, eval=TRUE, include=TRUE, cache=TRUE, fig.height=4, fig.width=16, cache=T}
+library(MotifDb)
+library(seqLogo)
+library(ggseqlogo)
+# motif visualisation
+
+PotentialIRF8 <- as.list(subset (MotifDb,
+                                tolower (geneSymbol)=="irf8"))
+# seqlogo
+PotentialIRF8[[2]]
+seqLogo(PotentialIRF8[[2]]) # mouse
+seqLogo(PotentialIRF8[[4]]) # human
+
+# ggseqlogo
+ggseqlogo(PotentialIRF8[[2]])
+ggseqlogo(PotentialIRF8[[4]])
+
+p1 <- ggseqlogo(PotentialIRF8[[2]], method = "bits")
+p2 <- ggseqlogo(PotentialIRF8[[2]], method = "prob")
+gridExtra::grid.arrange(p1, p2)
+
+p3 <- ggplot() + geom_logo(PotentialIRF8[[2]]) + theme_classic() + 
+  scale_y_continuous(expand = c(0,0), limits = c(0, 2.0)) + 
+  scale_x_continuous(expand = c(0,0), breaks = seq(1,15,1))
+gridExtra::grid.arrange(p1, p3)
+
+
+# add annotation
+ggplot() + 
+  annotate('rect', xmin = 2.5, xmax = 6.5, ymin = -0.05, ymax = 1.9, alpha = .1, col='black', fill='yellow') +
+  annotate('rect', xmin = 8.5, xmax = 12.5, ymin = -0.05, ymax = 1.9, alpha = .1, col='black', fill='yellow') +
+  geom_logo(PotentialIRF8[[2]], stack_width = 0.90) + 
+  annotate('text', x=4.5, y=2, label='IRF or ETS') + 
+  annotate('text', x=10.5, y=2, label='IRF motif') + 
+  theme_logo()
+
+```
+
+```{r pressure}
+sessionInfo()
+date()
+```
 
 
